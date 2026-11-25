@@ -10,9 +10,21 @@
 </p>
 
 > [!NOTE]
-> **本仓库是 WorkBuddy2API Plus（上游原项目的个人增强分支）。** 二进制与脚本名沿用上游（`wb2api`），只在项目名后加了 `Plus` 后缀；功能在上游基础上做了自用向增强
-> （识图/思考档位、试聊单号测试、账号 JSON 导入导出、错误聚合红标、体检脚本等，见下方「相对上游的改动」）。
-> 上游已声明停止维护（见下），本项目同样只作为个人自用工具，不保证对外部环境的兼容与存活。
+> 上游 `WorkBuddy2API Panel`（已停维护）的个人增强分支：名字加 `Plus`，二进制与脚本沿用 `wb2api`。仅自用，不保证对外部环境长期可用。
+
+## 优势速览（相对上游）
+
+| 你实际遇到的场景 | 上游 | 本分支（Plus） |
+|---|---|---|
+| 客户端里**贴图片没反应**（DSH 等） | 模型不声明视觉模态，图片在发送前就被拒 | 按网关 `supports_images` 自动写 `input: [text, image]`，贴图即用 |
+| 想让模型**想得更深 / 省点积分** | 客户端发什么算什么 | `upstream.min_effort` 下限（只抬不降），试聊里可选 `low → max` |
+| **某个号到底还行不行** | 只能看整池结果，换号把线索冲掉了 | 试聊「指定账号」：钉死一个号、忽略冷却、失败直接给它的真实上游错误 |
+| **换机器 / 备份账号** | 手动拼 JSON、字段对不上 | 账号 JSON 导入导出：六种形态兼容 + 写前预览 + 导出可直接回灌 |
+| **出问题怎么第一时间知道** | 翻日志文件 | 面板顶部红标按错误码聚合（`11-128` / `6020` / `402` …）+ `doctor` 九项体检 |
+| 空闲时**账号被莫名其妙冻住** | 排队（`6020`）也按限流冷却 10 分钟 | 队列码不罚号；真限流才冷却 5 分钟 |
+| 只想确认**"现在通不通"** | 发请求、翻日志 | `smoke`：一个请求、只测一个模型，10 秒内有结论 |
+| **macOS / Linux** 上用 | 只有 Windows 脚本 | `scripts/wb2api.sh` 命令对齐 + `make cross` 交叉编译三平台 |
+| 接到 **DSH / WorkBuddy 桌面应用** | 手写 provider、漏字段就报错 | `wb2api.ps1 dsh models` / `wb2api.ps1 wbapp` 一条命令同步模型清单（带倍率与视觉声明） |
 
 <p align="center">
   <b>把腾讯 CodeBuddy 账号变成 OpenAI 兼容 API 的多账号网关 · 附 Web 管理面板</b><br>
@@ -277,9 +289,31 @@ go build -trimpath -ldflags="-s -w" -o bin\wb2api.exe .\cmd\server
 
 配置文件：复制 `config.example.json` 为 `config.json` 再改。**`config.json`、`auths/`、`data/`、`logs/`、`backups/` 一律不进版本库**（见 `.gitignore`）。
 
-## 相对上游的改动
+### 上手三步
 
-上游快照：`linguo2625469/workbuddy2api-panel @ 73a7560`（已停止维护）。本分支在其之上做了以下自用向增强，版本号从 **1.0.0** 起算：
+```bash
+make build && ./scripts/wb2api.sh start     # 1. 起服务（Windows：.\wb2api.ps1 start）
+./scripts/wb2api.sh smoke                   # 2. 确认"通不通"：一个请求、一个模型
+```
+
+3. 打开 `http://127.0.0.1:7863/panel/` → 「添加账号」（浏览器登录或导入 JSON）→ 在「试聊」里选模型发一句话。
+
+### 日常怎么用（对应上面的优势）
+
+| 想做的事 | 操作 |
+|---|---|
+| 确认池子活着 | `./scripts/wb2api.sh smoke`（或面板「试聊」发一句） |
+| 排查某个账号 | 面板「试聊」→「指定账号」选中它 → 发送。通了=它还健康（即使标着冷却），失败=它自己的真实错误 |
+| 想让它想得更深 / 更省 | 「试聊」的思考档位选 `max` / `low`；或在 `config.json` 调 `upstream.min_effort` |
+| 备份 / 换机器 | 面板「导入 JSON」页 →「导出全部账号」；恢复时把文件拖回去（有预览，不会盲写） |
+| 看最近有没有异常 | 面板顶部红标（点一下跳运行日志）+ `./scripts/wb2api.sh doctor` |
+| 接 DSH / WorkBuddy 应用 | `.\wb2api.ps1 dsh models`（Windows）或 `python scripts/dsh_sync_models.py`（跨平台） |
+| 三平台分发 | `make cross` → `bin/wb2api-{linux,darwin,windows}-{amd64,arm64}` |
+
+## 本分支的改动（v1.0.0 起）
+
+谱系：`Sliverkiss/workbuddy2api` → `linguo2625469/workbuddy2api-panel @ 73a7560`（已停维护）→ **本仓库**。
+下面只列「本仓库相对 `73a7560` 新增的部分」；更早的增量见上一节「🆚 与上游的差异」。
 
 **网关**
 - `POST /v1/responses`（Responses ↔ Chat 双向转换，含 reasoning items）
