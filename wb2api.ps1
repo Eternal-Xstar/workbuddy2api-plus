@@ -1,7 +1,7 @@
 ﻿# wb2api.ps1 - WorkBuddy2API Plus 网关的统一控制台（单一入口，Windows）
 #
 #   .\wb2api.ps1 status              查看服务/账号/指标（默认动作）
-#   .\wb2api.ps1 smoke               渠道体检：只测一个 deepseek 模型（一个请求）
+#   .\wb2api.ps1 smoke [模型]         渠道体检：一个请求（默认 glm-5.3-flash，可指定其它）
 #   .\wb2api.ps1 start | stop | restart
 #   .\wb2api.ps1 logs [-Tail 50]     看日志尾巴
 #   .\wb2api.ps1 backup              备份凭证与配置（保留最近 7 份）
@@ -18,7 +18,9 @@ param(
     [string]$Action = 'status',
     [int]$Tail = 50,
     [Parameter(Position = 1)]
-    [string]$DshAction = 'status'
+    [string]$DshAction = 'status',
+    [Parameter(Position = 2)]
+    [string]$SmokeModel = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -302,6 +304,23 @@ function Do-Doctor {
         Line 8 '上游连通' 'FAIL' '两个上游域名都连不上 —— 检查网络/代理/DNS'
     }
 
+    # 10 模型锁池（模型级冷却：6004 等。doctor 第 1-9 项全绿也可能有模型不可用，这里单独报）
+    try {
+        $ov = Invoke-Api '/panel/api/overview'
+        $locks = @($ov.model_locks | Where-Object { $_ -and $_.model })
+        if ($locks.Count -gt 0) {
+            $detail = $locks | ForEach-Object {
+                $left = ''
+                try { $u = [datetime]$_.unlock_at; if ($u -gt (Get-Date)) { $left = ' ' + [math]::Round(($u - (Get-Date)).TotalMinutes) + '分' } } catch {}
+                "$($_.model)·$($_.state)$left"
+            }
+            Line 10 '模型锁池' 'WARN' ($detail -join ', ')
+        } else {
+            Line 10 '模型锁池' 'PASS' '所有模型均可选'
+        }
+    } catch {
+        Line 10 '模型锁池' 'WARN' ('读取失败: ' + $_.Exception.Message)
+    }
     # 9 近 24h 上游错误
     try {
         $es = Invoke-Api '/panel/api/error_summary?hours=24'
@@ -403,6 +422,7 @@ function Do-WbApp([string]$sub) {
     if ($sub -eq '' -or $sub -eq 'all') { 'WorkBuddy 应用：完全退出并重启后，模型下拉里会出现「(WorkBuddy 本机)」条目' }
 }
 function Do-Smoke {
+    param([string]$Model = '')
     # 渠道体检：**只发一个请求**，deepseek-v4.1-flash，够判断号池通不通。
     # 为什么只测一个（见 AGENTS.md）：上游免费/低倍率模型有排队（6020/6021，排位可到
     # 1700+），批量试跑会把自己拖进长队、把多个号同时冷却，还会把"通不通"这个问题搅浑。
@@ -410,7 +430,11 @@ function Do-Smoke {
     $key = Get-ApiKey
     $h = @{ 'Content-Type' = 'application/json' }
     if ($key) { $h['Authorization'] = "Bearer $key" }
-    $body = '{"model":"deepseek-v4.1-flash","messages":[{"role":"user","content":"只回答两个字：收到"}],"max_tokens":64,"stream":false}'
+    # 默认 glm-5.3-flash（x0.08，便宜且极少撞 6004）：deepseek-v4.1-flash 被模型级
+    # 限流时（几分钟到几小时），smoke 不该跟着误报"渠道挂了"。想测指定模型：
+    # .\wb2api.ps1 smoke deepseek-v4.1-flash
+    $model = if ($Model) { $Model } elseif ($SmokeModel) { $SmokeModel } else { 'glm-5.3-flash' }
+    $body = '{"model":"' + $model + '","messages":[{"role":"user","content":"只回答两个字：收到"}],"max_tokens":64,"stream":false}'
     $t0 = Get-Date
     try {
         $r = Invoke-RestMethod -Uri ($base + '/v1/chat/completions') -Method Post -Headers $h `
@@ -430,7 +454,7 @@ function Do-Smoke {
         if (-not $txt) { $txt = '(空回复)' }
         $tok = 0
         if ($r.usage) { $tok = $r.usage.completion_tokens }
-        "smoke : OK  model=deepseek-v4.1-flash  ${ms}ms  out=${tok}tok  content=`"$txt`""
+        "smoke : OK  model=$model  ${ms}ms  out=${tok}tok  content=`"$txt`""
     } catch {
         $ms = [int]((Get-Date) - $t0).TotalMilliseconds
         $msg = $_.Exception.Message
@@ -459,5 +483,10 @@ switch ($Action) {
     'dsh'         { Do-Dsh $DshAction }
     'doctor'      { Do-Doctor }
     'wbapp'       { Do-WbApp $DshAction }
-    'smoke'       { Do-Smoke }
+    'smoke'       {
+        # smoke 后面的位置参数（走 DshAction）= 要测的模型；为空用默认 glm-5.3-flash
+        # "status" 是 DshAction 的缺省值，不是模型名；其它值按模型名透传
+        $m = if ($DshAction -and $DshAction -ne 'status') { $DshAction } else { '' }
+        Do-Smoke -Model $m
+    }
 }
