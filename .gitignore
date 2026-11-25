@@ -1,0 +1,69 @@
+# Auth & secrets
+auths/
+data/
+*.key
+*.pem
+*.env
+.env
+.env.*
+
+# 配置备份（可能含旧 api_key / 上游密钥）
+config.json.*
+config.*.bak
+*.bak-withkey
+*.bak-*
+
+# 运行日志（含账号 uid/昵称、上游错误原文）
+logs/
+*.log
+
+# 本地二进制与图标（图标来自第三方项目，不随仓库分发）
+bin/
+/wb2api.exe
+*.ico
+wb2api-*.png
+
+# 本地补丁留档（提交后即冗余）
+patches/
+
+# 本地测试夹具（可能含测试令牌与固定端口）
+_e2e/
+
+# Binaries (anchored to repo root only — bare "login"/"credit" would also ignore cmd/login/, cmd/credit/)
+/login
+/credit
+/wb2api
+/signin_bin
+
+# Config with secrets (use config.example.json)
+config.json
+
+# Build artifacts
+*.tmp
+__pycache__/
+
+# Backups (contains auth tokens)
+backups/
+
+# IDE
+.idea/
+.vscode/
+LOOP.md
+PLAN.md
+SPEC.md
+docs/
+
+# 设计/计划文档（但 README.md 必须进版本库）
+*.md
+!README.md
+
+# Windows binaries
+/wb2api.exe
+/login.exe
+/credit.exe
+
+# 本地验证工具（判据逆向过程脚本，结论沉淀于 data/desktop-task-protocol.md）
+/cmd/desktopverify*/
+*.zip
+server.exe
+.DS_Store
