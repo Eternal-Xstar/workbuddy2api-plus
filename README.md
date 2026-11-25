@@ -27,6 +27,17 @@
 | 一句话自检 | `smoke`：一个请求、一个模型，确认「现在通不通」 |
 | 跨平台运行 | Windows 用 `wb2api.ps1`，macOS / Linux 用 `scripts/wb2api.sh`（命令对齐）；`make cross` 交叉编译三平台 |
 | 客户端接入 | `dsh models` / `wbapp` 一条命令把网关的模型清单（含倍率、视觉声明）同步到 DSH 与 WorkBuddy 桌面应用 |
+| 运维体验 | `wb2api.ps1` / `scripts/wb2api.sh` 统一控制台：一键启停、体检（doctor）、自检（smoke）、备份；日志按大小自动轮转 |
+
+## 这版改了什么（v1.0.0 改版重点）
+
+- **跨平台**：`make cross` 一次产出 Windows / Linux / macOS（amd64 + arm64）六份单文件二进制，Release 直接下载；
+- **面板更直观**：统计卡带状态色条、渐变主按钮、行悬停反馈、错误红标直接跳日志，凭证到期 / 模型锁池一屏可见；
+- **排障更快**：试聊可钉死单个账号发请求；错误按码聚合；`doctor` 九项体检把「配置/进程/端口/健康/账号/目录/磁盘/连通/错误」一次说清；
+- **账号不再手工搬运**：JSON 导入导出兼容六种常见导出格式，写入前预览，导出文件原样回灌；
+- **行为更贴近真实**：上游排队（`6020/6021`）不再把账号冻住；`smoke` 一条命令确认渠道存活；
+- **token 自动续期有度**：临期窗口可配（`refresh_skew`），保活只在必要时刷新，不消耗多余配额。
+
 <p align="center">
   <b>把腾讯 CodeBuddy 账号变成 OpenAI 兼容 API 的多账号网关 · 附 Web 管理面板</b><br>
   Web 面板 · OAuth 浏览器登录 · 账号池轮转 · 熔断与冷却 · 会话粘性 · 定时签到 / 活跃 / 旅行 / 保活 · <b>成长任务一键完成（17/18）</b> · 流式 / 非流式
@@ -41,42 +52,23 @@
 
 ---
 
-> [!IMPORTANT]
-> **项目已停止维护（2026-10-21）**：后续不再更新代码、不跟进上游变化、不再处理新的 issue / PR。
+> [!NOTE]
+> **本仓库是 WorkBuddy2API Plus（v1.0.0）**——`WorkBuddy2API Panel` 的个人增强分支（上游已停止维护）。本项目在其基础上持续演进，定位不变：**个人自用的账号管理 + OpenAI 兼容网关**。
 >
-> 原因有三：
-> 1. **上游已开始禁用反代**——WorkBuddy 对非官方客户端的识别与拦截正在收紧（通道校验、账号限制等），反代通道的稳定性与存活周期已不可控，继续做适配意义有限；
-> 2. **个人精力有限**——本项目本就是个人自用工具，无力长期跟进协议变化与风控对抗；
-> 3. **非法转卖泛滥**——发现大量批量注册小号、对外售卖额度、二次加壳 / 卡密分发的滥用行为，与本项目初衷完全相悖。
->
-> 仓库保持现状可用（已合入的修复不会回退），但请自行评估风险：**上游随时可能彻底收紧导致不可用**；因使用非官方客户端导致的账号风控 / 封禁，由使用者自行承担。
->
-> **维护方式披露**：本仓库近期的 issue / PR 处置、代码审查、测试与修复实现**大量由 AI 辅助完成**（自动化编码 agent），合并与发布决策由维护者作出。请知悉后再使用或参与贡献。
-
-> **本项目是 [Sliverkiss/workbuddy2api](https://github.com/Sliverkiss/workbuddy2api) 的增强分支**（fork）。
-> 上游仓库现已删除；本项目**已同步至上游删库前的最后一次更新**（`ea8b1e5`），此后由本分支独立维护演进。
-> 在上游基础上重构了可视化运维层；差异概览见 [与上游的差异](#-与上游的差异)，上游设计的精巧之处（账号池调度、错误分类、提示词体系）原样保留，详见下文。
-
-> ⚠️ **本项目仅限自用账号（签到 / 保活 / 个人工具接入），不支持同时也是禁止批量小号分发额度、二次打包或收费售卖。** 详见 [使用声明（必读）](#使用声明必读)。
-
+> - 二进制与脚本沿用上游命名（`wb2api`），新增能力见上方「[增强速览](#增强速览)」与「[本分支的改动](#本分支的改动v100-起)」；
+> - 免费开源（MIT），**禁止**批量小号分发额度、二次打包或收费售卖（详见[使用声明](#使用声明必读)）；
+> - 维护披露：近期修复与测试**大量由 AI 辅助完成**，合并与发布决策由维护者作出。
 ## 使用声明（必读）
 
-本项目（含上游 [Sliverkiss/workbuddy2api](https://github.com/Sliverkiss/workbuddy2api)，下同）的开发初衷只有一个：**方便个人管理自己的 CodeBuddy 账号**——自动签到、保活、给自己的本地工具提供一个 OpenAI 兼容入口。它是免费、开源、按「原样」提供的个人自用工具。
+本项目与上游的开发初衷只有一个：**方便个人管理自己的 CodeBuddy 账号**——自动签到、保活，给自己的本地工具提供 OpenAI 兼容入口。免费开源（MIT），按「原样」提供。
 
-近期我们发现有人将本项目用于以下行为：
+三条边界，请务必知悉：
 
-- **批量注册小号 / 收购账号，对外提供付费 API、共享池、代充等业务**；
-- **二次加壳、捆绑卡密（授权码）售卖**，或以「公益服」「低价中转」等名义变相收费分发。
+1. **仅限自用。** 用自己的账号、自己的机器、自己的工具接入。批量注册小号分发额度、代充共享池、二次加壳/卡密售卖都是明确禁止的——这些行为违反平台服务条款，也和本项目初衷完全相悖，后果由行为人自行承担。
+2. **警惕收费版本。** 本项目永远免费开源；任何「收费版 / 卡密版 / 公益中转版」都是他人篡改的产物，与本项目无关。`auths/` 存的是明文凭证，来历不明的分发包可能窃取你的账号。
+3. **风险自担。** 这是非官方网关，上游随时可能收紧识别策略导致不可用；由此产生的账号风控与封禁由使用者自行承担。若滥用持续，作者保留停止维护的权利。
 
-我们对上述行为**表达最强烈的反对**，并声明如下：
-
-1. **一切商用 / 售卖行为与本项目及作者无关。** 本项目不授权、不支持、不参与任何面向公众的 API 售卖、账号池出租、卡密收费分发；行为人由此产生的一切后果（包括但不限于账号封禁、条款违约与法律风险）由其自行承担，与作者和贡献者无任何关系。
-2. **批量注册与转售接口配额违反目标平台服务条款。** CodeBuddy / 腾讯系服务条款禁止批量注册账号及商业转售接口。上游仓库已删除、停止公开维护——我们无法断定具体原因，但此类滥用行为正在毁掉所有正常使用者的环境，请勿再消耗社区的善意。
-3. **请勿购买任何「收费版」「卡密版」「公益中转版」。** 本项目永远免费开源。任何加壳、加密、捆绑收费的「版本」都是他人篡改的产物，与本项目无关；且此类分发无法审计，存在被植入后门、回传并窃取你 CodeBuddy 凭证的风险（`auths/` 中保存的是明文 accessToken / refreshToken）。**你付钱买到的不是本项目，而是把自己账号交给陌生人的机会。**
-4. **关于开源协议的诚实说明。** 本项目基于 MIT 协议开源，协议允许自由使用与修改源码——这是开源的本意，我们不会收回；但 MIT 赋予的是代码层面的自由，**不赋予**以本项目名义宣传、售卖、捆绑分发，或要求作者提供支持与背书的权利。作者不为任何第三方分发版本提供支持、更新承诺或安全保证。
-5. **作者保留止损的权利。** 若滥用行为持续，作者可能随时停止维护、关闭或删除仓库，且不另行通知。上游的今天可能就是本项目的明天，望自重。
-
-如果你的用途是管理自己的账号，欢迎正常使用、反馈问题与提交 PR。
+管理自己账号的用途，欢迎正常使用、反馈与 PR。
 
 ## 项目简介
 
@@ -342,148 +334,6 @@ make build && ./scripts/wb2api.sh start     # 1. 起服务（Windows：.\wb2api.
 否则 DSH 会在发送前把图片拒掉（默认只声明 `text`）。`scripts/dsh_sync_models.py` 已按网关
 `/v1/models` 的 `supports_images` 自动写入该字段。
 
-## 快速开始
-
-
-### 环境要求
-
-- **Docker + Docker Compose**（服务端部署方式，镜像内已含低权限用户与全部工具脚本）——或
-- **Windows / macOS / Linux 直接跑单文件二进制**（无需 Docker，见下方「Windows 单文件运行」）
-- 一个或多个已注册的 CodeBuddy 账号，用于 OAuth 登录
-- 宿主机 Go ≥ 1.22（仅从源码构建时需要）
-
-### 方式〇：GHCR 镜像（免克隆免构建）
-
-CI 会自动构建多架构镜像（`amd64` / `arm64`）并发布到 GHCR，`git clone` 之外的部署路径：
-
-```bash
-# 1. 准备配置与数据目录
-mkdir -p auths data && cp config.example.json config.json
-#    建议编辑 config.json 设置 api_key（或留空由程序自动生成随机密钥）
-
-# 2. 拉取并运行
-docker run -d --name workbuddy2api \
-  -p 7863:7863 -e TZ=Asia/Shanghai \
-  -v ./auths:/app/auths -v ./data:/app/data -v ./config.json:/app/config.json \
-  ghcr.io/linguo2625469/workbuddy2api-panel:latest
-
-# 3. 健康检查（无可用账号时返回 503）
-curl -s http://localhost:7863/healthz
-```
-
-> **首次发布后须将包设为公开**：GitHub 仓库页 → Packages → `workbuddy2api-panel` →
-> Package settings → Change visibility → Public，否则拉取需要 `docker login ghcr.io`。
->
-> 镜像 tag 规则：`main` 分支推送 `latest` / `main` / `sha-xxxxxx`；打 `v*` tag 额外发布
-> `1.2.3` / `1.2` / `1` 语义化版本；PR 仅构建验证、不推送。
-
-### 方式一：Docker Compose（推荐服务器部署）
-
-```bash
-# 1. 克隆
-git clone https://github.com/linguo2625469/workbuddy2api-panel.git
-cd workbuddy2api-panel
-
-# 2. 准备配置（compose 挂载此文件，缺失会导致容器启动失败）
-cp config.example.json config.json
-#    建议编辑 config.json 设置 api_key（或留空由程序自动生成随机密钥）
-
-# 3. 启动（首次会构建镜像，约 1-2 分钟）
-docker compose up -d --build
-
-# 4. 健康检查（无可用账号时返回 503）
-curl -s http://localhost:7863/healthz
-# {"healthy":0,"total":0,"service":"workbuddy2api"}
-```
-
-启动后打开 **`http://localhost:7863/panel/`**，用面板「添加账号」完成登录（见下节）。
-
-常用运维命令：
-
-```bash
-docker compose logs -f          # 跟踪日志
-docker compose restart          # 重启
-docker compose down             # 停止并移除容器（数据在 ./auths 与 ./data，不受影响）
-```
-
-### 方式二：Windows 单文件运行（无需 Docker）
-
-```powershell
-# 1) 下载 Release 中的 wb2api.exe，或从源码构建
-go build -trimpath -ldflags="-s -w" -o wb2api.exe ./cmd/server
-
-# 2) 直接运行：首次启动自动生成 config.json（含随机 api_key，日志打印一次）
-.\wb2api.exe -config config.json
-
-# 3) 浏览器打开面板添加账号
-#    http://127.0.0.1:7863/panel/
-```
-
-exe 为**单文件自包含**（前端资源已 embed 进二进制），拷到任意 Windows 机器即可运行，只需保证 `auths/`（凭证）与 `data/`（状态）目录可写。
-
-### 方式三：源码运行（开发调试）
-
-```bash
-go build ./...
-go vet ./...
-go test ./...                      # 完整测试套件
-go run ./cmd/server -config config.json
-```
-
-构建全部二进制：
-
-```bash
-CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o wb2api ./cmd/server
-CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o signin_bin ./cmd/signin
-CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o login ./cmd/login
-CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o credit ./cmd/credit
-```
-
-### 添加账号（登录）
-
-**方式 A：Web 面板（推荐，各平台通用，免命令行）**
-
-打开 `http://127.0.0.1:7863/panel/`，点右上角「**添加账号**」：面板展示授权链接 → 浏览器完成登录 → 自动检测并落盘凭证 → **热加载进池（无需重启）**，顺带完成首次签到。
-
-**方式 B：命令行脚本（仅 Linux / macOS，依赖 bash + python3）**
-
-```bash
-./login.sh
-# 按提示在浏览器打开授权链接 → 回到终端确认 → 凭证落盘 auths/workbuddy-<uid>.json
-```
-
-`login.sh` 内置授权 URL 获取 + 浏览器登录 + token 轮询 + 首次签到 + 凭证落盘 + 容器重启，全程无 PKCE（state 由服务端签发）。账号池在容器启动时用 `auths/` 目录自动对齐，新增凭证文件即自动发现。
-
-> Windows 用户请用方式 A（或 WSL）；`login.sh` 需要 python3。
-
-### 验证
-
-```bash
-# 模型列表
-curl -s http://localhost:7863/v1/models -H "Authorization: Bearer your-api-key"
-
-# 账号状态（汇总 + 每账号详情，disabled 账号透出 disabled_reason）
-curl -s http://localhost:7863/status -H "Authorization: Bearer your-api-key"
-
-# 流式聊天
-curl -sN http://localhost:7863/v1/chat/completions \
-  -H "Authorization: Bearer your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"deepseek-v4-flash","messages":[{"role":"user","content":"hi"}],"stream":true}'
-
-# 非流式聊天（本地聚合）
-curl -s http://localhost:7863/v1/chat/completions \
-  -H "Authorization: Bearer your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"deepseek-v4-flash","messages":[{"role":"user","content":"hi"}],"stream":false}'
-
-# 联网搜索（Anthropic Messages 兼容形态，走上游 /agenttool/v1/search）
-curl -s http://localhost:7863/v1/search/messages \
-  -H "Authorization: Bearer your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"deepseek-v4-flash","tools":[{"type":"web_search_20250305","name":"web_search"}],
-       "messages":[{"role":"user","content":"Perform a web search for the query: OpenAI 最新模型"}]}'
-```
 
 ## 配置说明
 
