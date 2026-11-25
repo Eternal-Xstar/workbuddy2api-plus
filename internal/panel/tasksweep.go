@@ -26,7 +26,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // TaskSweepStats 一轮补领清扫的汇总（供日志与潜在的未来 HTTP 回执）。

@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // withNoPickGap 临时关闭防并发撞号窗口（minPickGap=0），让纯加权分布测试不受影响。

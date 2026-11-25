@@ -1,4 +1,4 @@
-module github.com/Eternal-Xstar/buddygate
+module github.com/Eternal-Xstar/workbuddy2api-plus
 
 go 1.22.5
 

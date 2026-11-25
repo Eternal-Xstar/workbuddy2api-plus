@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // acceptBatchGap 批量接受的批间节流（对齐脚本 1.05s 口径，避免上游风控）。

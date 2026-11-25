@@ -14,13 +14,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
-	"github.com/Eternal-Xstar/buddygate/internal/prompt"
-	"github.com/Eternal-Xstar/buddygate/internal/redisstore"
-	"github.com/Eternal-Xstar/buddygate/internal/session"
-	"github.com/Eternal-Xstar/buddygate/internal/upstream"
-	"github.com/Eternal-Xstar/buddygate/internal/usage"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/prompt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/redisstore"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/session"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/upstream"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/usage"
 )
 
 // TestMain 默认关闭聊天表格日志（chatLogEnabled=false），消除 go test 期间的 stdout 噪音。

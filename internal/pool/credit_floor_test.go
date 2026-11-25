@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // TestCreditFloorBlocksPaidBelowFloor 触底号被拦在 tier 2 之外：

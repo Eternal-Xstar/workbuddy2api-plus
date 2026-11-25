@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/redisstore"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/redisstore"
 )
 
 // countingStore 记录镜像调用次数的假 Store（不联网）。

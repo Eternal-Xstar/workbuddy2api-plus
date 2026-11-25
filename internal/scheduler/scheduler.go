@@ -12,10 +12,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
-	"github.com/Eternal-Xstar/buddygate/internal/logfmt"
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
-	"github.com/Eternal-Xstar/buddygate/internal/upstream"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/logfmt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/upstream"
 )
 
 // Config 调度器依赖。

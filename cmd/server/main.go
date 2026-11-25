@@ -18,21 +18,21 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
-	"github.com/Eternal-Xstar/buddygate/internal/credithist"
-	"github.com/Eternal-Xstar/buddygate/internal/errmon"
-	"github.com/Eternal-Xstar/buddygate/internal/livecfg"
-	"github.com/Eternal-Xstar/buddygate/internal/logrotate"
-	"github.com/Eternal-Xstar/buddygate/internal/panel"
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
-	"github.com/Eternal-Xstar/buddygate/internal/quota"
-	"github.com/Eternal-Xstar/buddygate/internal/redisstore"
-	"github.com/Eternal-Xstar/buddygate/internal/reqlog"
-	"github.com/Eternal-Xstar/buddygate/internal/scheduler"
-	"github.com/Eternal-Xstar/buddygate/internal/server"
-	"github.com/Eternal-Xstar/buddygate/internal/session"
-	"github.com/Eternal-Xstar/buddygate/internal/upstream"
-	"github.com/Eternal-Xstar/buddygate/internal/usage"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/credithist"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/errmon"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/livecfg"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/logrotate"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/panel"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/quota"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/redisstore"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/reqlog"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/scheduler"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/server"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/session"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/upstream"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/usage"
 )
 
 // appVersion 网关版本（fork 版：面板 + 任务体系），透出到 /panel/api/overview。
@@ -507,7 +507,7 @@ func main() {
 		_ = srv.Shutdown(shutdownCtx)
 	}()
 
-	log.Printf("buddygate listening on %s (api_key=%v)，管理面板 http://127.0.0.1%s/panel/", cfg.Listen, cfg.APIKey != "", panelListenPath(cfg.Listen))
+	log.Printf("workbuddy2api-plus listening on %s (api_key=%v)，管理面板 http://127.0.0.1%s/panel/", cfg.Listen, cfg.APIKey != "", panelListenPath(cfg.Listen))
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("http: %v", err)
 	}

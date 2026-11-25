@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
-	"github.com/Eternal-Xstar/buddygate/internal/scheduler"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/scheduler"
 )
 
 // TestOverviewIncludesExpiryBuckets 钉住面板接线：池内写入的按日到期批次必须原样

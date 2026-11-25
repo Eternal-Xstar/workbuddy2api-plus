@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
-	"github.com/Eternal-Xstar/buddygate/internal/logfmt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/logfmt"
 )
 
 // Pick 单一选号入口（无请求级轮换、无 realm 过滤，模型感知缺省账号级）。

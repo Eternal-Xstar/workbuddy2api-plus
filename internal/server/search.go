@@ -16,9 +16,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Eternal-Xstar/buddygate/internal/logfmt"
-	"github.com/Eternal-Xstar/buddygate/internal/session"
-	"github.com/Eternal-Xstar/buddygate/internal/upstream"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/logfmt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/session"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/upstream"
 )
 
 // searchToolLabel 搜索流量在请求日志「模型」列里的标识。

@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
-# buddygate.sh - BuddyGate 网关控制台（macOS / Linux）
+# wb2api.sh - WorkBuddy2API Plus 网关控制台（macOS / Linux）
 #
-#   ./scripts/buddygate.sh status          查看服务/账号/指标（默认动作）
-#   ./scripts/buddygate.sh start | stop | restart
-#   ./scripts/buddygate.sh logs [行数]      看日志尾巴（默认 60 行）
-#   ./scripts/buddygate.sh smoke           渠道体检：只测一个 deepseek 模型（一个请求）
-#   ./scripts/buddygate.sh doctor          一键体检（9 项）
-#   ./scripts/buddygate.sh backup          备份凭证/配置/账本（保留最近 7 份）
-#   ./scripts/buddygate.sh build [平台]     构建二进制（本机 / linux / darwin / windows）
+#   ./scripts/wb2api.sh status          查看服务/账号/指标（默认动作）
+#   ./scripts/wb2api.sh start | stop | restart
+#   ./scripts/wb2api.sh logs [行数]      看日志尾巴（默认 60 行）
+#   ./scripts/wb2api.sh smoke           渠道体检：只测一个 deepseek 模型（一个请求）
+#   ./scripts/wb2api.sh doctor          一键体检（9 项）
+#   ./scripts/wb2api.sh backup          备份凭证/配置/账本（保留最近 7 份）
+#   ./scripts/wb2api.sh build [平台]     构建二进制（本机 / linux / darwin / windows）
 #
-# 与 Windows 的 buddygate.ps1 命令对齐；两边读同一份 config.json。
+# 与 Windows 的 wb2api.ps1 命令对齐；两边读同一份 config.json。
 # 依赖：bash 3.2+、curl（smoke/status 用），构建需要 Go 1.22+。
 set -u
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT" || exit 1
 
-BIN="$ROOT/bin/buddygate"
+BIN="$ROOT/bin/wb2api"
 CFG="$ROOT/config.json"
 LOGDIR="$ROOT/logs"
-LOG="$LOGDIR/buddygate.log"
-PIDFILE="$ROOT/data/buddygate.pid"
+LOG="$LOGDIR/wb2api.log"
+PIDFILE="$ROOT/data/wb2api.pid"
 BACKUPDIR="$ROOT/backups"
 
 ACTION="${1:-status}"
@@ -68,10 +68,10 @@ do_build() {
   mkdir -p bin
   local goos goarch
   case "$target" in
-    host) go build -trimpath -ldflags='-s -w' -o bin/buddygate ./cmd/server ;;
+    host) go build -trimpath -ldflags='-s -w' -o bin/wb2api ./cmd/server ;;
     linux|darwin|windows)
       goos="$target"; goarch="$(go env GOARCH)"
-      local out="bin/buddygate-$goos-$goarch"
+      local out="bin/wb2api-$goos-$goarch"
       [ "$goos" = windows ] && out="$out.exe"
       GOOS="$goos" GOARCH="$goarch" CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o "$out" ./cmd/server
       say "built: $out" ;;
@@ -81,10 +81,10 @@ do_build() {
 
 do_start() {
   if is_running; then say "already running: pid $(cat "$PIDFILE")"; return 0; fi
-  [ -x "$BIN" ] || die "缺少 $BIN —— 先跑：./scripts/buddygate.sh build"
+  [ -x "$BIN" ] || die "缺少 $BIN —— 先跑：./scripts/wb2api.sh build"
   mkdir -p "$LOGDIR" "$(dirname "$PIDFILE")"
   # 主日志由进程自己按大小轮转（config.logging.file）；这里只兜 stdio。
-  "$BIN" -config "$CFG" >>"$LOGDIR/buddygate.stdio.log" 2>&1 &
+  "$BIN" -config "$CFG" >>"$LOGDIR/wb2api.stdio.log" 2>&1 &
   local pid=$!
   printf '%s' "$pid" > "$PIDFILE"
   local i
@@ -94,7 +94,7 @@ do_start() {
       say "started: pid $pid -> $(base_url)/panel/"; return 0
     fi
     if ! kill -0 "$pid" 2>/dev/null; then
-      say "进程已退出，看日志：$LOGDIR/buddygate.stdio.log"; return 1
+      say "进程已退出，看日志：$LOGDIR/wb2api.stdio.log"; return 1
     fi
   done
   say "started: pid $pid（/healthz 还没通，可能仍在加载账号）"
@@ -159,7 +159,7 @@ do_smoke() {
 
 do_doctor() {
   local fail=0
-  say "BuddyGate 体检  $(date '+%Y-%m-%d %H:%M:%S')"
+  say "WorkBuddy2API Plus 体检  $(date '+%Y-%m-%d %H:%M:%S')"
   say "------------------------------------------------------------------"
   # 1 配置
   if [ -f "$CFG" ]; then
@@ -200,7 +200,7 @@ do_doctor() {
 do_backup() {
   mkdir -p "$BACKUPDIR"
   local ts; ts=$(date '+%Y%m%d-%H%M%S')
-  local zip="$BACKUPDIR/buddygate-$ts.tar.gz"
+  local zip="$BACKUPDIR/wb2api-$ts.tar.gz"
   local stage; stage=$(mktemp -d)
   mkdir -p "$stage/auths" "$stage/data"
   [ -d "$ROOT/auths" ] && cp -f "$ROOT"/auths/*.json "$stage/auths" 2>/dev/null
@@ -210,7 +210,7 @@ do_backup() {
   done
   tar -czf "$zip" -C "$stage" . && rm -rf "$stage"
   say "backup: $zip ($(du -h "$zip" | cut -f1))"
-  ls -1t "$BACKUPDIR"/buddygate-*.tar.gz 2>/dev/null | tail -n +8 | while read -r old; do rm -f "$old"; say "pruned: $(basename "$old")"; done
+  ls -1t "$BACKUPDIR"/wb2api-*.tar.gz 2>/dev/null | tail -n +8 | while read -r old; do rm -f "$old"; say "pruned: $(basename "$old")"; done
 }
 
 case "$ACTION" in

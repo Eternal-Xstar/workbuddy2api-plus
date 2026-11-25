@@ -3,7 +3,7 @@ package pool
 import (
 	"testing"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // TestCountsPausedSeparate 暂停号在两种口径下的计数（issue #125）。

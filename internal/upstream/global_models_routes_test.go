@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // TestMergeV3RoutesPriority 主路字段权威：同 id 在三路都出现时，字段取自主路

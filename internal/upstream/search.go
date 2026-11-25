@@ -24,7 +24,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 const (

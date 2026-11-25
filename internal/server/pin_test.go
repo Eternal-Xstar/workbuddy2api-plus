@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // 未指定账号 → pinUIDOf 返回空，走正常轮换。

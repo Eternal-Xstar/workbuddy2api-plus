@@ -16,10 +16,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/logfmt"
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
-	"github.com/Eternal-Xstar/buddygate/internal/reqlog"
-	"github.com/Eternal-Xstar/buddygate/internal/upstream"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/logfmt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/reqlog"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/upstream"
 )
 
 // maxUserAgentLen 归档与面板展示保留的 UA 字节上限。UA 是客户端完全可控的

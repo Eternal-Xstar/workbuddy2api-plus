@@ -22,15 +22,15 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
-	"github.com/Eternal-Xstar/buddygate/internal/credithist"
-	"github.com/Eternal-Xstar/buddygate/internal/httpauth"
-	"github.com/Eternal-Xstar/buddygate/internal/livecfg"
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
-	"github.com/Eternal-Xstar/buddygate/internal/reqlog"
-	"github.com/Eternal-Xstar/buddygate/internal/scheduler"
-	"github.com/Eternal-Xstar/buddygate/internal/upstream"
-	"github.com/Eternal-Xstar/buddygate/internal/usage"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/credithist"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/httpauth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/livecfg"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/reqlog"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/scheduler"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/upstream"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/usage"
 )
 
 // Config 面板依赖（main 装配注入）。

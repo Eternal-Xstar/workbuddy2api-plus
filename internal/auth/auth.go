@@ -16,7 +16,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/logfmt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/logfmt"
 )
 
 // Auth 是归一化后的账号凭证（来源可以是插件 OAuth 嵌套形或手写扁平形）。

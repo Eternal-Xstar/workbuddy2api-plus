@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // TestEnterpriseResourceMapsAllocatedQuota 企业版额度走 get-enterprise-user-usage：

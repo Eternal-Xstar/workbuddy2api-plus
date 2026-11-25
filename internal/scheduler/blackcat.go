@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/logfmt"
-	"github.com/Eternal-Xstar/buddygate/internal/upstream"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/logfmt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/upstream"
 )
 
 // nowForNightWindow 夜猫子窗口判定所用时钟（生产恒为 time.Now）。

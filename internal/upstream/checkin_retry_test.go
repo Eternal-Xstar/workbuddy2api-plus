@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // shortBillingRetry 测试用重试间隔（生产 2s 会让单测秒级膨胀）。

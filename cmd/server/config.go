@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
-	"github.com/Eternal-Xstar/buddygate/internal/prompt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/prompt"
 )
 
 // Config 顶层配置。

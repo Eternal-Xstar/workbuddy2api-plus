@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/credithist"
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/credithist"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
 )
 
 // limit 口径：默认 200、上限 1000；0 / 负数 / 非法 / 溢出 / 空 一律回落 200。

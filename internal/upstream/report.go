@@ -15,7 +15,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // reportPath 活跃上报通道（实测）。

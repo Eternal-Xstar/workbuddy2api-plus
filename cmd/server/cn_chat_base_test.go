@@ -4,7 +4,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/Eternal-Xstar/buddygate/internal/upstream"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/upstream"
 )
 
 // 老配置（无 cn 段）必须保留内置 CN base，零回归。

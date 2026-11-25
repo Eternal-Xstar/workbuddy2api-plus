@@ -16,18 +16,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
-	"github.com/Eternal-Xstar/buddygate/internal/httpauth"
-	"github.com/Eternal-Xstar/buddygate/internal/livecfg"
-	"github.com/Eternal-Xstar/buddygate/internal/logfmt"
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
-	"github.com/Eternal-Xstar/buddygate/internal/prompt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/httpauth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/livecfg"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/logfmt"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/prompt"
 
-	"github.com/Eternal-Xstar/buddygate/internal/errmon"
-	"github.com/Eternal-Xstar/buddygate/internal/reqlog"
-	"github.com/Eternal-Xstar/buddygate/internal/session"
-	"github.com/Eternal-Xstar/buddygate/internal/upstream"
-	"github.com/Eternal-Xstar/buddygate/internal/usage"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/errmon"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/reqlog"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/session"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/upstream"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/usage"
 )
 
 // Config handler 依赖。

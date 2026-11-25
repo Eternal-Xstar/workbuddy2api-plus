@@ -19,7 +19,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // ProbeBodyLimit 探针响应体上限：配额线判定只看状态码与错误码，1MB 足够读完

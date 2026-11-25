@@ -3,7 +3,7 @@ package pool
 import (
 	"testing"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // TestStatusExposesEnterpriseFlag 面板需要 per-account 的「是否企业版」来决定

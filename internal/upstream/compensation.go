@@ -27,7 +27,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // CompensationStatus 单账号的补偿活动状态。

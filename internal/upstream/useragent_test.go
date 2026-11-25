@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // uaCaptureTransport 记录出站请求的 User-Agent。

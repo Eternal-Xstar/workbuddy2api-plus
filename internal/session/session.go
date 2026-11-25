@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/redisstore"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/redisstore"
 )
 
 // entry 单条会话绑定。

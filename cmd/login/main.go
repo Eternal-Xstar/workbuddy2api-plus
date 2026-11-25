@@ -30,7 +30,7 @@ import (
 	"strings"
 	"time"
 
-	auth2 "github.com/Eternal-Xstar/buddygate/internal/auth"
+	auth2 "github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // 上游常量：CN → copilot.tencent.com（Origin 为 codebuddy.cn）；global → www.workbuddy.ai

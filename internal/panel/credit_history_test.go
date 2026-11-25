@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
-	"github.com/Eternal-Xstar/buddygate/internal/credithist"
-	"github.com/Eternal-Xstar/buddygate/internal/pool"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/credithist"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/pool"
 )
 
 // creditPanel 构造带积分账本与一个具名账号的面板（鉴权走 test-key）。

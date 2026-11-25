@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/workbuddy2api-plus/internal/auth"
 )
 
 // CN 模型目录拉取失败必须留下一行 WARN（此前静默，排障无线索），且负缓存期内
