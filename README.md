@@ -10,7 +10,7 @@
 </p>
 
 > [!NOTE]
-> 上游 `WorkBuddy2API Panel`（已停维护）的个人增强分支：名字加 `Plus`，二进制与脚本沿用 `wb2api`。仅自用，不保证对外部环境长期可用。
+> **这是 `WorkBuddy2API Panel` 的个人增强分支（二开）**：项目名加 `Plus` 后缀区分，二进制与脚本沿用 `wb2api`。
 
 ## 增强速览
 
@@ -53,7 +53,7 @@
 ---
 
 > [!NOTE]
-> **本仓库是 WorkBuddy2API Plus（v1.0.0）**——`WorkBuddy2API Panel` 的个人增强分支（上游已停止维护）。本项目在其基础上持续演进，定位不变：**个人自用的账号管理 + OpenAI 兼容网关**。
+> **本仓库是 WorkBuddy2API Plus（v1.0.0）**——`WorkBuddy2API Panel` 的个人增强分支（二开）。本项目在其基础上持续演进，定位不变：**个人自用的账号管理 + OpenAI 兼容网关**。
 >
 > - 二进制与脚本沿用上游命名（`wb2api`），新增能力见上方「[增强速览](#增强速览)」与「[本分支的改动](#本分支的改动v100-起)」；
 > - 免费开源（MIT），**禁止**批量小号分发额度、二次打包或收费售卖（详见[使用声明](#使用声明必读)）；
@@ -305,7 +305,7 @@ make build && ./scripts/wb2api.sh start     # 1. 起服务（Windows：.\wb2api.
 
 ## 本分支的改动（v1.0.0 起）
 
-谱系：`Sliverkiss/workbuddy2api` → `linguo2625469/workbuddy2api-panel @ 73a7560`（已停维护）→ **本仓库**。
+谱系：`Sliverkiss/workbuddy2api` → `linguo2625469/workbuddy2api-panel @ 73a7560`→ **本仓库**。
 下面只列「本仓库相对 `73a7560` 新增的部分」；更早的增量见上一节「🆚 与上游的差异」。
 
 **网关**
