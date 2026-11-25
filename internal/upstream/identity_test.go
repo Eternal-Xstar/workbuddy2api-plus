@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/linguo2625469/workbuddy2api-panel/internal/auth"
+	"github.com/Eternal-Xstar/buddygate/internal/auth"
 )
 
 // 官方客户端自报身份头必须齐全（11-128 通道校验看的就是"头集合像不像官方客户端"）。

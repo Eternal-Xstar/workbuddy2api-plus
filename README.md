@@ -1,8 +1,18 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/DGZSbot/ai-icon/refs/heads/main/WorkBuddy.png" alt="WorkBuddy2API" width="120">
+  <img src="https://raw.githubusercontent.com/DGZSbot/ai-icon/refs/heads/main/WorkBuddy.png" alt="BuddyGate" width="120">
 </p>
 
-<h1 align="center">WorkBuddy2API Panel</h1>
+<h1 align="center">BuddyGate <sub>v1.0.0</sub></h1>
+
+<p align="center">
+  <b>WorkBuddy / CodeBuddy 账号 → OpenAI 兼容网关 · 单文件二进制 · Windows / macOS / Linux</b><br>
+  自上游 <a href="https://github.com/linguo2625469/workbuddy2api-panel">linguo2625469/workbuddy2api-panel</a>（@73a7560）分叉的个人自用版本
+</p>
+
+> [!NOTE]
+> **本仓库是 BuddyGate，不是上游原项目。** 名字、二进制、脚本都换了，功能在上游基础上做了自用向增强
+> （识图/思考档位、试聊单号测试、账号 JSON 导入导出、错误聚合红标、体检脚本等，见下方「相对上游的改动」）。
+> 上游已声明停止维护（见下），本项目同样只作为个人自用工具，不保证对外部环境的兼容与存活。
 
 <p align="center">
   <b>把腾讯 CodeBuddy 账号变成 OpenAI 兼容 API 的多账号网关 · 附 Web 管理面板</b><br>
@@ -225,7 +235,80 @@ flowchart LR
 
 上游请求在出站前经历统一的改写管线（`internal/upstream/payload.go`）：强制 `stream:true`、`developer` 角色归一、tool_choice 归一、`image_url` 字符串兼容为 OpenAI 对象形态、DeepSeek 思维链注入、`reasoning_effort` 档位降级、`reasoning_content` 回填、指纹脱敏。
 
+## 快速开始（三平台）
+
+### 构建
+
+```bash
+# macOS / Linux（Makefile）
+make build            # -> bin/buddygate
+make cross            # -> bin/buddygate-{linux,darwin,windows}-{amd64,arm64}
+
+# 或者直接用 Go
+go build -trimpath -ldflags="-s -w" -o bin/buddygate ./cmd/server
+```
+
+```powershell
+# Windows
+go build -trimpath -ldflags="-s -w" -o bin\buddygate.exe .\cmd\server
+```
+
+二进制是**单文件**（前端已内嵌），没有任何运行时依赖；`auths/`、`data/`、`logs/` 会在首次运行时自动创建。
+
+### 运行与控制台
+
+| 平台 | 控制台 | 常用命令 |
+|---|---|---|
+| Windows | `.\buddygate.ps1` | `status` / `start` / `stop` / `restart` / `logs` / `smoke` / `doctor` / `backup` / `dsh` / `wbapp` |
+| macOS · Linux | `./scripts/buddygate.sh` | `status` / `start` / `stop` / `restart` / `logs [行数]` / `smoke` / `doctor` / `backup` / `build [平台]` |
+
+```bash
+./scripts/buddygate.sh build     # 构建本机二进制
+./scripts/buddygate.sh start     # 后台启动并写入 data/buddygate.pid
+./scripts/buddygate.sh smoke     # 渠道体检：只发一个请求
+./scripts/buddygate.sh doctor    # 9 项体检
+```
+
+前台运行（调试用）：
+
+```bash
+./bin/buddygate -config config.json
+```
+
+配置文件：复制 `config.example.json` 为 `config.json` 再改。**`config.json`、`auths/`、`data/`、`logs/`、`backups/` 一律不进版本库**（见 `.gitignore`）。
+
+## 相对上游的改动
+
+上游快照：`linguo2625469/workbuddy2api-panel @ 73a7560`（已停止维护）。本分支在其之上做了以下自用向增强，版本号从 **1.0.0** 起算：
+
+**网关**
+- `POST /v1/responses`（Responses ↔ Chat 双向转换，含 reasoning items）
+- 主动配额扫描（`internal/quota`）与上游契约漂移监测（`internal/upstream/watch.go`）
+- 空回复救援：仅在「只有思考没有正文」时抬高输出预算，**不动** `thinking` / `tools`
+- 客户端身份头对齐（`x-stainless-*`、`b3`、`traceparent`、`baggage`）与提示词指纹脱敏
+- 思考档位下限 `upstream.min_effort`：只抬不降，模型不支持时退到其最高档
+- 队列码 `6020` / `6021` 归 `ErrUpstreamBusy`（不罚号），`6020` 不再误触发 10 分钟冷却
+- 上游错误近因聚合（`internal/errmon`）+ 进程内日志按大小轮转（`internal/logrotate`）
+
+**面板**
+- 试聊支持「指定账号」（`X-BuddyGate-Account`，忽略冷却、不轮换）
+- 账号 JSON 导入导出：多形态解码 + dry-run 预览 + 批内去重 + 导出可回灌
+- 上游错误红标、凭证到期提示、积分到期卡默认收起
+- 批量动作单飞保护 + 手动触发立即执行（不再按 `account_spread` 摊开数分钟）
+
+**脚本 / 跨平台**
+- `buddygate.ps1`（Windows）与 `scripts/buddygate.sh`（macOS/Linux）命令对齐
+- `Makefile`：`build` / `cross` / `test` / `vet` / `run` / `clean`
+- DSH 与 WorkBuddy 桌面应用的模型清单同步脚本（含视觉模态声明）
+
+## 视觉（识图）注意
+
+如果客户端是 DeepSeek Harness（DSH），provider 的模型条目必须声明 `input: [text, image]`，
+否则 DSH 会在发送前把图片拒掉（默认只声明 `text`）。`scripts/dsh_sync_models.py` 已按网关
+`/v1/models` 的 `supports_images` 自动写入该字段。
+
 ## 快速开始
+
 
 ### 环境要求
 

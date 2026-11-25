@@ -18,25 +18,25 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/linguo2625469/workbuddy2api-panel/internal/auth"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/credithist"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/errmon"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/livecfg"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/logrotate"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/panel"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/pool"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/quota"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/redisstore"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/reqlog"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/scheduler"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/server"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/session"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/upstream"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/usage"
+	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/buddygate/internal/credithist"
+	"github.com/Eternal-Xstar/buddygate/internal/errmon"
+	"github.com/Eternal-Xstar/buddygate/internal/livecfg"
+	"github.com/Eternal-Xstar/buddygate/internal/logrotate"
+	"github.com/Eternal-Xstar/buddygate/internal/panel"
+	"github.com/Eternal-Xstar/buddygate/internal/pool"
+	"github.com/Eternal-Xstar/buddygate/internal/quota"
+	"github.com/Eternal-Xstar/buddygate/internal/redisstore"
+	"github.com/Eternal-Xstar/buddygate/internal/reqlog"
+	"github.com/Eternal-Xstar/buddygate/internal/scheduler"
+	"github.com/Eternal-Xstar/buddygate/internal/server"
+	"github.com/Eternal-Xstar/buddygate/internal/session"
+	"github.com/Eternal-Xstar/buddygate/internal/upstream"
+	"github.com/Eternal-Xstar/buddygate/internal/usage"
 )
 
 // appVersion 网关版本（fork 版：面板 + 任务体系），透出到 /panel/api/overview。
-const appVersion = "1.13.0-panel"
+var appVersion = "1.0.0"
 
 // usagePathFor 由 state 文件路径推出用量文件路径：同目录、文件名 usage.json。
 // 这样 config 里改 state_file 时用量数据跟着走，不需要额外配置项。
@@ -507,7 +507,7 @@ func main() {
 		_ = srv.Shutdown(shutdownCtx)
 	}()
 
-	log.Printf("workbuddy2api listening on %s (api_key=%v)，管理面板 http://127.0.0.1%s/panel/", cfg.Listen, cfg.APIKey != "", panelListenPath(cfg.Listen))
+	log.Printf("buddygate listening on %s (api_key=%v)，管理面板 http://127.0.0.1%s/panel/", cfg.Listen, cfg.APIKey != "", panelListenPath(cfg.Listen))
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("http: %v", err)
 	}

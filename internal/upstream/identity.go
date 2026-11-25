@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/linguo2625469/workbuddy2api-panel/internal/auth"
+	"github.com/Eternal-Xstar/buddygate/internal/auth"
 )
 
 // 官方 chat 出站自报的 SDK / agent 指纹（国内 5.8.3 与国际 5.8.4 实测一致）。

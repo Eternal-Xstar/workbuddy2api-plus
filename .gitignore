@@ -20,6 +20,9 @@ logs/
 # 本地二进制与图标（图标来自第三方项目，不随仓库分发）
 bin/
 /wb2api.exe
+/buddygate
+/buddygate.exe
+/bin/
 *.ico
 wb2api-*.png
 
@@ -59,6 +62,9 @@ docs/
 
 # Windows binaries
 /wb2api.exe
+/buddygate
+/buddygate.exe
+/bin/
 /login.exe
 /credit.exe
 

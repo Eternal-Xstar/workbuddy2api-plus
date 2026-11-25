@@ -8,8 +8,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/linguo2625469/workbuddy2api-panel/internal/auth"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/upstream"
+	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/buddygate/internal/upstream"
 )
 
 // TestRunAutoAllClaimsDoneButUnclaimed issue #174 顺带项：runAutoAll 遇到

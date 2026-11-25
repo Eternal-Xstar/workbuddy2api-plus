@@ -22,15 +22,15 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/linguo2625469/workbuddy2api-panel/internal/auth"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/credithist"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/httpauth"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/livecfg"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/pool"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/reqlog"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/scheduler"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/upstream"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/usage"
+	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/buddygate/internal/credithist"
+	"github.com/Eternal-Xstar/buddygate/internal/httpauth"
+	"github.com/Eternal-Xstar/buddygate/internal/livecfg"
+	"github.com/Eternal-Xstar/buddygate/internal/pool"
+	"github.com/Eternal-Xstar/buddygate/internal/reqlog"
+	"github.com/Eternal-Xstar/buddygate/internal/scheduler"
+	"github.com/Eternal-Xstar/buddygate/internal/upstream"
+	"github.com/Eternal-Xstar/buddygate/internal/usage"
 )
 
 // Config 面板依赖（main 装配注入）。

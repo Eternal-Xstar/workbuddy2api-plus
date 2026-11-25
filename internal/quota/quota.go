@@ -31,9 +31,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/linguo2625469/workbuddy2api-panel/internal/auth"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/pool"
-	"github.com/linguo2625469/workbuddy2api-panel/internal/upstream"
+	"github.com/Eternal-Xstar/buddygate/internal/auth"
+	"github.com/Eternal-Xstar/buddygate/internal/pool"
+	"github.com/Eternal-Xstar/buddygate/internal/upstream"
 )
 
 // DefaultEvery 默认扫描间隔：6 小时（与 hub 版同口径）。

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/linguo2625469/workbuddy2api-panel/internal/auth"
+	"github.com/Eternal-Xstar/buddygate/internal/auth"
 )
 
 // 未指定账号 → pinUIDOf 返回空，走正常轮换。

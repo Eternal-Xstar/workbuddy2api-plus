@@ -1,17 +1,17 @@
-﻿# wb2api.ps1 - workbuddy2api 网关的统一控制台（单一入口）
+﻿# buddygate.ps1 - BuddyGate 网关的统一控制台（单一入口，Windows）
 #
-#   .\wb2api.ps1 status              查看服务/账号/指标（默认动作）
-#   .\wb2api.ps1 smoke               渠道体检：只测一个 deepseek 模型（一个请求）
-#   .\wb2api.ps1 start | stop | restart
-#   .\wb2api.ps1 logs [-Tail 50]     看日志尾巴
-#   .\wb2api.ps1 backup              备份凭证与配置（保留最近 7 份）
-#   .\wb2api.ps1 doctor              一键体检（9 项：配置/进程/端口/健康/账号/目录/磁盘/连通/错误）
-#   .\wb2api.ps1 autostart | noautostart
-#   .\wb2api.ps1 dsh [status|apply|remove]   配置/撤销 DSH 的 WorkBuddy provider
-#   .\wb2api.ps1 dsh models[|-dry|-status]  把网关模型目录同步进该 provider
-#   .\wb2api.ps1 wbapp [status|dry|all]    把网关写进 WorkBuddy 应用的自定义模型
+#   .\buddygate.ps1 status              查看服务/账号/指标（默认动作）
+#   .\buddygate.ps1 smoke               渠道体检：只测一个 deepseek 模型（一个请求）
+#   .\buddygate.ps1 start | stop | restart
+#   .\buddygate.ps1 logs [-Tail 50]     看日志尾巴
+#   .\buddygate.ps1 backup              备份凭证与配置（保留最近 7 份）
+#   .\buddygate.ps1 doctor              一键体检（9 项：配置/进程/端口/健康/账号/目录/磁盘/连通/错误）
+#   .\buddygate.ps1 autostart | noautostart
+#   .\buddygate.ps1 dsh [status|apply|remove]   配置/撤销 DSH 的 WorkBuddy provider
+#   .\buddygate.ps1 dsh models[|-dry|-status]  把网关模型目录同步进该 provider
+#   .\buddygate.ps1 wbapp [status|dry|all]    把网关写进 WorkBuddy 应用的自定义模型
 #
-# 网关是单文件二进制（bin\wb2api.exe，前端已内嵌）；本脚本只做进程与文件操作。
+# 网关是单文件二进制（bin\buddygate.exe，前端已内嵌）；本脚本只做进程与文件操作。
 param(
     [Parameter(Position = 0)]
     [ValidateSet('status', 'start', 'stop', 'restart', 'logs', 'backup', 'autostart', 'noautostart', 'dsh', 'doctor', 'wbapp', 'smoke')]
@@ -24,13 +24,13 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
-$exe = Join-Path $root 'bin\wb2api.exe'
+$exe = Join-Path $root 'bin\buddygate.exe'
 $cfgPath = Join-Path $root 'config.json'
 $logDir = Join-Path $root 'logs'
-$logErr = Join-Path $logDir 'wb2api.log'
-$logOut = Join-Path $logDir 'wb2api.out.log'
+$logErr = Join-Path $logDir 'buddygate.log'
+$logOut = Join-Path $logDir 'buddygate.out.log'
 $backupDir = Join-Path $root 'backups'
-$startupLnk = Join-Path ([Environment]::GetFolderPath('Startup')) 'wb2api.lnk'
+$startupLnk = Join-Path ([Environment]::GetFolderPath('Startup')) 'buddygate.lnk'
 
 function Get-ApiKey {
     if (-not (Test-Path $cfgPath)) { return '' }
@@ -71,19 +71,19 @@ function Wait-Health([int]$Seconds = 20) {
 }
 
 function Do-Start {
-    $p = @(Get-Process -Name wb2api -ErrorAction SilentlyContinue)
+    $p = @(Get-Process -Name buddygate -ErrorAction SilentlyContinue)
     if ($p.Count -gt 0) { "already running: PID $($p.Id -join ',')"; return }
-    if (-not (Test-Path $exe)) { throw "missing $exe - build first: go build -o bin\wb2api.exe .\cmd\server" }
+    if (-not (Test-Path $exe)) { throw "missing $exe - build first: go build -o bin\buddygate.exe .\cmd\server" }
     New-Item -ItemType Directory -Force -Path $logDir | Out-Null
-    # 主日志（logs\wb2api.log）现在由**进程自己**按大小轮转（config.logging.file），
+    # 主日志（logs\buddygate.log）现在由**进程自己**按大小轮转（config.logging.file），
     # 这里不再动它。启动脚本只兜 stdio：Go 的 panic / 运行时错误 / logging.file 打开
     # 失败前的早期输出都会落到 stdio.log，正常运行时它很小，重启时滚成 .prev。
-    $stdioOut = Join-Path $logDir 'wb2api.stdio.log'
-    $stdioErr = Join-Path $logDir 'wb2api.stdio.err.log'
+    $stdioOut = Join-Path $logDir 'buddygate.stdio.log'
+    $stdioErr = Join-Path $logDir 'buddygate.stdio.err.log'
     foreach ($f in @($stdioOut, $stdioErr)) {
         if (Test-Path -LiteralPath $f) { Move-Item -LiteralPath $f -Destination ($f + '.prev') -Force }
     }
-    $stdinFile = Join-Path $env:TEMP 'wb2api-stdin.txt'
+    $stdinFile = Join-Path $env:TEMP 'buddygate-stdin.txt'
     if (-not (Test-Path $stdinFile)) { New-Item -ItemType File -Path $stdinFile -Force | Out-Null }
     $proc = Start-Process -FilePath $exe -ArgumentList '-config', 'config.json' -WorkingDirectory $root `
         -WindowStyle Hidden -PassThru -RedirectStandardOutput $stdioOut -RedirectStandardError $stdioErr -RedirectStandardInput $stdinFile
@@ -97,19 +97,19 @@ function Do-Start {
 }
 
 function Do-Stop {
-    $p = @(Get-Process -Name wb2api -ErrorAction SilentlyContinue)
+    $p = @(Get-Process -Name buddygate -ErrorAction SilentlyContinue)
     if ($p.Count -eq 0) { 'not running'; return }
     $p | Stop-Process -Force
     for ($i = 0; $i -lt 20; $i++) {
         Start-Sleep -Milliseconds 200
-        if (@(Get-Process -Name wb2api -ErrorAction SilentlyContinue).Count -eq 0) { break }
+        if (@(Get-Process -Name buddygate -ErrorAction SilentlyContinue).Count -eq 0) { break }
     }
-    if (@(Get-Process -Name wb2api -ErrorAction SilentlyContinue).Count -gt 0) { 'stop failed: wb2api still present' }
+    if (@(Get-Process -Name buddygate -ErrorAction SilentlyContinue).Count -gt 0) { 'stop failed: buddygate still present' }
     else { "stopped: PID $($p.Id -join ',')" }
 }
 
 function Do-Status {
-    $p = @(Get-Process -Name wb2api -ErrorAction SilentlyContinue)
+    $p = @(Get-Process -Name buddygate -ErrorAction SilentlyContinue)
     if ($p.Count -eq 0) { 'service: STOPPED'; return }
     $proc = $p[0]
     $rss = [math]::Round($proc.WorkingSet64 / 1MB, 1)
@@ -149,7 +149,7 @@ function Do-Doctor {
         "  [{0}] {1,-10} {2}" -f $tag, $name, $detail
     }
 
-    "WorkBuddy 网关体检  $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+    "BuddyGate 体检  $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
     "------------------------------------------------------------------"
 
     # 1 配置
@@ -168,9 +168,9 @@ function Do-Doctor {
     if ($null -eq $cfg) { "------------------------------------------------------------------"; "结论：配置不可用，其余检查略过"; exit 1 }
 
     # 2 进程
-    $procs = @(Get-Process -Name wb2api -ErrorAction SilentlyContinue)
+    $procs = @(Get-Process -Name buddygate -ErrorAction SilentlyContinue)
     if ($procs.Count -eq 0) {
-        Line 2 '进程' 'FAIL' 'wb2api 未运行 —— 双击桌面「WorkBuddy 网关」或执行 .\wb2api.ps1 start'
+        Line 2 '进程' 'FAIL' 'buddygate 未运行 —— 双击桌面「BuddyGate」或执行 .\buddygate.ps1 start'
     } else {
         $rss = [math]::Round(($procs | Measure-Object WorkingSet64 -Sum).Sum / 1MB, 1)
         Line 2 '进程' 'PASS' ("运行中 PID {0} · RSS {1}MB" -f (($procs.Id) -join ','), $rss)
@@ -183,9 +183,9 @@ function Do-Doctor {
     if ($own.Count -eq 0) {
         Line 3 '端口' 'FAIL' ("{0} 没有监听 —— 服务没起来或被别的程序占用" -f $port)
     } elseif ($procs.Count -gt 0 -and ($own.OwningProcess -contains $procs[0].Id)) {
-        Line 3 '端口' 'PASS' ("127.0.0.1:{0} 由 wb2api 监听" -f $port)
+        Line 3 '端口' 'PASS' ("127.0.0.1:{0} 由 buddygate 监听" -f $port)
     } else {
-        Line 3 '端口' 'WARN' ("{0} 在监听，但占用者不是当前 wb2api 进程（PID {1}）" -f $port, ($own.OwningProcess -join ','))
+        Line 3 '端口' 'WARN' ("{0} 在监听，但占用者不是当前 buddygate 进程（PID {1}）" -f $port, ($own.OwningProcess -join ','))
     }
 
     # 4 健康端点
@@ -248,9 +248,9 @@ function Do-Doctor {
     # 7 磁盘与日志体积
     $logBytes = 0
     $logFiles = @()
-    foreach ($sub in @('wb2api.log', 'wb2api.log.1', 'wb2api.log.2', 'wb2api.log.3',
-                       'wb2api.log.prev', 'wb2api.stdio.log', 'wb2api.stdio.err.log',
-                       'wb2api.out.log')) {
+    foreach ($sub in @('buddygate.log', 'buddygate.log.1', 'buddygate.log.2', 'buddygate.log.3',
+                       'buddygate.log.prev', 'buddygate.stdio.log', 'buddygate.stdio.err.log',
+                       'buddygate.out.log')) {
         $f = Join-Path $logDir $sub
         if (Test-Path -LiteralPath $f) {
             $sz = (Get-Item -LiteralPath $f).Length
@@ -332,8 +332,8 @@ function Do-Logs {
 function Do-Backup {
     New-Item -ItemType Directory -Force -Path $backupDir | Out-Null
     $ts = Get-Date -Format 'yyyyMMdd-HHmmss'
-    $zip = Join-Path $backupDir "wb2api-$ts.zip"
-    $stage = Join-Path $env:TEMP "wb2api-backup-$ts"
+    $zip = Join-Path $backupDir "buddygate-$ts.zip"
+    $stage = Join-Path $env:TEMP "buddygate-backup-$ts"
     New-Item -ItemType Directory -Force -Path (Join-Path $stage 'auths') | Out-Null
     New-Item -ItemType Directory -Force -Path (Join-Path $stage 'data') | Out-Null
     # 只备"丢了就要重新扫码"的东西：凭证、配置、池状态与账本；日志与请求归档不进包
@@ -349,7 +349,7 @@ function Do-Backup {
     Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
     $size = [math]::Round((Get-Item $zip).Length / 1KB, 1)
     "backup: $zip (${size}KB)"
-    $old = Get-ChildItem $backupDir -Filter 'wb2api-*.zip' | Sort-Object LastWriteTime -Descending | Select-Object -Skip 7
+    $old = Get-ChildItem $backupDir -Filter 'buddygate-*.zip' | Sort-Object LastWriteTime -Descending | Select-Object -Skip 7
     if ($old) { $old | Remove-Item -Force; "pruned: $($old.Count) old backup(s)" }
 }
 
@@ -358,9 +358,9 @@ function Do-Autostart([bool]$on) {
         $ws = New-Object -ComObject WScript.Shell
         $lnk = $ws.CreateShortcut($startupLnk)
         $lnk.TargetPath = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
-        $lnk.Arguments = "-WindowStyle Hidden -ExecutionPolicy Bypass -File `"$root\start-wb2api.ps1`""
+        $lnk.Arguments = "-WindowStyle Hidden -ExecutionPolicy Bypass -File `"$root\start-buddygate.ps1`""
         $lnk.WorkingDirectory = $root
-        $lnk.Description = 'workbuddy2api gateway autostart'
+        $lnk.Description = 'BuddyGate gateway autostart'
         $lnk.Save()
         "autostart: ON -> $startupLnk"
     } else {
@@ -443,7 +443,7 @@ function Do-Smoke {
         } catch { }
         if (-not $detail) { $detail = $msg }
         "smoke : FAIL  ${ms}ms  $detail"
-        "        先看 .\wb2api.ps1 status（是否全池冷却）与 .\wb2api.ps1 logs -Tail 20"
+        "        先看 .\buddygate.ps1 status（是否全池冷却）与 .\buddygate.ps1 logs -Tail 20"
         return
     }
 }

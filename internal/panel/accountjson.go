@@ -27,7 +27,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/linguo2625469/workbuddy2api-panel/internal/auth"
+	"github.com/Eternal-Xstar/buddygate/internal/auth"
 )
 
 // accountRaw 一个账号在 JSON 里的原始字段（宽松解析：两种命名都收）。

@@ -1,8 +1,8 @@
 'use strict';
 /* ── 状态 ─────────────────────────────────────────────────────────── */
-const LS_KEY = 'wb2api.key', LS_THEME = 'wb2api.theme';
+const LS_KEY = 'buddygate.key', LS_THEME = 'buddygate.theme';
 /* 账号备注与「积分到期提醒」折叠的本机键（同上：模块级声明放顶部，避开 TDZ）。 */
-const LS_REMARKS = 'wb2api.remarks.v1', LS_EXP_FOLD = 'wb2api.expfold.v1';
+const LS_REMARKS = 'buddygate.remarks.v1', LS_EXP_FOLD = 'buddygate.expfold.v1';
 let remarksCache = null;
 let theme = localStorage.getItem(LS_THEME) || 'auto';   // auto | light | dark
 let view = 'accounts';
@@ -1493,7 +1493,7 @@ async function exportAccounts(redact) {
       throw new Error(msg);
     }
     const blob = await r.blob();
-    let name = redact ? 'wb2api-accounts-redacted.json' : 'wb2api-accounts.json';
+    let name = redact ? 'buddygate-accounts-redacted.json' : 'buddygate-accounts.json';
     const cd = r.headers.get('Content-Disposition') || '';
     const m = /filename="([^"]+)"/.exec(cd);
     if (m) name = m[1];
@@ -3719,7 +3719,7 @@ async function initPlayground() {
 }
 
 /* 指定账号：把某个号钉死在这次请求上（单号排障）。
-   走请求头 X-WB2API-Account，网关侧只试这一个号、不轮换，
+   走请求头 X-BuddyGate-Account，网关侧只试这一个号、不轮换，
    并且忽略冷却/熔断（测试就是要看真实状态）。 */
 function pgAccountLabel(a) {
   const cool = a.cooling ? ' · 冷却中' : '';
@@ -3800,7 +3800,7 @@ async function pgSend() {
   try {
     const r = await fetch('/v1/chat/completions', {
       method: 'POST',
-      headers: pgV1Headers(pinUID ? { 'X-WB2API-Account': pinUID } : null),
+      headers: pgV1Headers(pinUID ? { 'X-BuddyGate-Account': pinUID } : null),
       body: JSON.stringify(body),
       signal: pgAbort ? pgAbort.signal : undefined
     });

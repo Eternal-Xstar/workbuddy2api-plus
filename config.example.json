@@ -14,7 +14,7 @@
     "request_archive_enabled": true,
     "request_retention_days": 7,
     "request_archive_max_mb": 100,
-    "file": "./logs/wb2api.log",
+    "file": "./logs/buddygate.log",
     "max_mb": 20,
     "keep": 3,
     "request_client_info": true
