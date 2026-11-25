@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>WorkBuddy / CodeBuddy 账号 → OpenAI 兼容网关 · 单文件二进制 · Windows / macOS / Linux</b><br>
-  自上游 <a href="https://github.com/linguo2625469/workbuddy2api-panel">linguo2625469/workbuddy2api-panel</a>（@73a7560）分叉的个人自用版本
+  自上游 <a href="https://github.com/linguo2625469/workbuddy2api-panel">linguo2625469/workbuddy2api-panel</a>（@73a7560）的个人增强分支（二开）
 </p>
 
 > [!NOTE]
