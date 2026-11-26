@@ -33,13 +33,13 @@ func TestSummaryBucketsAndSeverity(t *testing.T) {
 	if s.Buckets[0].First.After(s.Buckets[0].Last) {
 		t.Fatal("first/last 颠倒")
 	}
-	if len(s.Alerts) != 2 || s.Alerts[0] == "" {
+	if len(s.Alerts) != 1 || s.Alerts[0] == "" {
 		t.Fatalf("alerts = %v", s.Alerts)
 	}
-	// 429 归黄级。
+	// soft_rate 现在是提示级（不进红标），但桶还在（doctor/API 可查）。
 	for _, b := range s.Buckets {
-		if b.Kind == "soft_rate" && b.Severity != "warn" {
-			t.Fatalf("soft_rate 应为 warn，实得 %q", b.Severity)
+		if b.Kind == "soft_rate" && b.Severity != "" {
+			t.Fatalf("soft_rate 应为提示级（空 severity），实得 %q", b.Severity)
 		}
 	}
 }

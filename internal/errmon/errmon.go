@@ -106,7 +106,9 @@ func (m *Monitor) events(since time.Time) []Event {
 //     但用户侧表现为"突然不能用了"，必须显式告警。
 //   - hard_credit / account_restricted：账号级硬故障 → 红。
 //   - waf_block / forbidden：出口 IP 被打 → 红。
-//   - soft_rate / upstream_busy / server / timeout：可自愈 → 黄。
+//   - soft_rate / upstream_busy：可自愈的常态信号（限流几分钟恢复、排队下一次就过），
+//     **不进红标**——单独一条 "6004 ×1" 只会制造噪音；数据仍可经 API/doctor 查询。
+//   - server / timeout：可自愈 → 黄。
 //   - 其余：提示级。
 func severity(kind string) (string, string) {
 	switch kind {
@@ -118,8 +120,6 @@ func severity(kind string) (string, string) {
 		return "bad", "账号被上游限制（11140）：官方客户端也未必可用"
 	case "waf_block", "forbidden":
 		return "bad", "出口 IP 被上游风控（403）：换网/换代理才会好"
-	case "soft_rate", "upstream_busy":
-		return "warn", "上游限流/排队：会在重置时间自动恢复"
 	case "server":
 		return "warn", "上游 5xx：服务端波动，重试即可"
 	case "timeout":
